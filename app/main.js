@@ -1,32 +1,35 @@
 var storage = require('./storage.js');
 
-function take(name, user) {
-    var env = storage.get(name);
-    if (env == null) return 'env_not_found: ' + name;
-    if (env == user)
-        return 'You already own this env.';
-    if (env != '')
-        return 'Sorry, env ' + name + ' is already taken by ' + env + '. They must release it first.';
-    storage.take(name, user);
-    return 'Success. Env ' + name + ' is now taken by ' + user;
-}
-
-function release(name, user) {
-    var env = storage.get(name);
-    if (env == null) return 'env_not_found: ' + name;
-    if (env == '') return 'Env ' + name + ' is free';
-    if (env != user) {
-        return "Sorry, you don't own the env. " + env + " does";
+function take(ctx) {
+    var env = storage.get(ctx.env);
+    if (env == null) return 'env_not_found';
+    if (env == ctx.user)
+        return 'already_own';
+    if (env != '') {
+        ctx.owner = env;
+        return 'env_taken';
     }
-    storage.take(name, '');
-    return 'Success. Env ' + name + ' is now free';
+    storage.take(ctx.env, ctx.user);
+    return 'env_take_success';
 }
 
-function add(name) {
-    var env = storage.get(name);
-    if (env != null) return 'env_exists: ' + name;
-    storage.add(name);
-    return 'Env ' + name + ' is successfully added';
+function release(ctx) {
+    var env = storage.get(ctx.env);
+    if (env == null) return 'env_not_found';
+    if (env == '') return 'env_already_free';
+    if (env != ctx.user) {
+        ctx.owner = env;
+        return 'env_not_yours';
+    }
+    storage.take(ctx.env, '');
+    return 'env_release_success';
+}
+
+function add(ctx) {
+    var env = storage.get(ctx.env);
+    if (env != null) return 'env_exists'; // TODO: return status, e.g. env_exists_free and env_exists_taken
+    storage.add(ctx.env);
+    return 'env_add_success';
 }
 
 
@@ -35,19 +38,17 @@ var Main = {
         return token == process.env.TOKEN;
     },
 
-    process: function(text, user) {
-        var parts = text.split(' ');
-        if (parts.length < 2)
+    process: function(ctx) {
+        if (!ctx.command || !ctx.env)
             return 'not_enough_params';
-        switch(parts[0]) {
+        switch(ctx.command) {
             case 'take':
-                return take(parts[1], user);
+                return take(ctx);
             case 'add':
-                return add(parts[1]);
+                return add(ctx);
             case 'release':
-                return release(parts[1], user);
+                return release(ctx);
         }
-
         return 'unknown_command';
     }
 };
