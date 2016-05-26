@@ -51,10 +51,8 @@ var Main = {
     },
 
     process: function (ctx) {
-        if (!ctx.command)
-            return 'not_enough_params';
-        if (!ctx.env)
-            return 'not_enough_params';
+        if (!ctx.command || !ctx.env)
+            return new Promise(function(r) {r('not_enough_params')});
         switch (ctx.command) {
             case 'add':
                 return add(ctx);
@@ -65,7 +63,7 @@ var Main = {
             case 'status':
                 return status(ctx);
         }
-        return 'unknown_command';
+        return new Promise(function(r) {r('unknown_command')});
     }
 };
 
