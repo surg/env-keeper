@@ -19,27 +19,27 @@ var InMemoryStorage = {
 
 // Redis
 
-var redis = require('redis');
-Promise.promisifyAll(redis.RedisClient.prototype);
-Promise.promisifyAll(redis.Multi.prototype);
-var client = redis.createClient(process.env.REDIS_HOST, process.env.REDIS_PORT);
-
-var RedisStorage = {
-    get: function(name) {
-        // client.
-    },
-
-    set: function(env, user) {
-        return new Promise(function(resolve) {
-            inmemory[env] = user;
-            resolve();
-        });
-    },
-
-    add: function(env) {
-        return this.set(env, '');
-    }
-};
+// var redis = require('redis');
+// Promise.promisifyAll(redis.RedisClient.prototype);
+// Promise.promisifyAll(redis.Multi.prototype);
+// var client = redis.createClient(process.env.REDIS_HOST, process.env.REDIS_PORT);
+//
+// var RedisStorage = {
+//     get: function(name) {
+//         // client.
+//     },
+//
+//     set: function(env, user) {
+//         return new Promise(function(resolve) {
+//             inmemory[env] = user;
+//             resolve();
+//         });
+//     },
+//
+//     add: function(env) {
+//         return this.set(env, '');
+//     }
+// };
 
 
 module.exports = InMemoryStorage;
