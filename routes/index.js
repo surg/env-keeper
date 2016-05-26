@@ -17,8 +17,10 @@ router.post('/webhook', function (req, res) {
         res.send('Not Authorized');
     } else {
         var ctx = context(body);
-        var result = main.process(ctx);
-        res.render(result, ctx);
+        main.process(ctx).then(function(result) {
+            res.json(result, ctx);
+        });
+
     }
 
 });

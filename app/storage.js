@@ -1,16 +1,45 @@
+var Promise = require('bluebird');
 var inmemory = {};
-var Storage = {
+var InMemoryStorage = {
     get: function(name) {
-        return inmemory[name];
+        return new Promise(function(resolve) { resolve(inmemory[name])});
     },
 
-    take: function(env, user) {
-        inmemory[env] = user;
+    set: function(env, user) {
+        return new Promise(function(resolve) {
+            inmemory[env] = user;
+            resolve();
+        });
     },
 
     add: function(env) {
-        inmemory[env] = '';
+        return this.set(env, '');
     }
 };
 
-module.exports = Storage;
+// Redis
+
+var redis = require('redis');
+Promise.promisifyAll(redis.RedisClient.prototype);
+Promise.promisifyAll(redis.Multi.prototype);
+var client = redis.createClient(process.env.REDIS_HOST, process.env.REDIS_PORT);
+
+var RedisStorage = {
+    get: function(name) {
+        // client.
+    },
+
+    set: function(env, user) {
+        return new Promise(function(resolve) {
+            inmemory[env] = user;
+            resolve();
+        });
+    },
+
+    add: function(env) {
+        return this.set(env, '');
+    }
+};
+
+
+module.exports = InMemoryStorage;
