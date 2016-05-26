@@ -4,7 +4,6 @@ var context = require('../app/context');
 
 var router = express.Router();
 
-
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Env keeper'});
@@ -18,7 +17,7 @@ router.post('/webhook', function (req, res) {
     } else {
         var ctx = context(body);
         main.process(ctx).then(function(result) {
-            res.json(result, ctx);
+            res.render(result, ctx);
         });
 
     }
