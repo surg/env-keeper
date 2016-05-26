@@ -2,11 +2,9 @@ var storage = require('./storage.js');
 
 function add(ctx) {
     return storage.get(ctx.env).then(function (env) {
-        if (env != null) return 'env_exists'; // TODO: return status, e.g. env_exists_free and env_exists_taken
+        if (env != null) return status(ctx);
         return storage.add(ctx.env).then(function() {return 'env_add_success';});
-
     });
-
 }
 
 function take(ctx) {
@@ -38,6 +36,14 @@ function release(ctx) {
     });
 }
 
+function status(ctx) {
+    return storage.get(ctx.env).then(function (owner) {
+        if (owner == null) return 'env_not_found';
+        if (owner == '') return 'env_status_free';
+        ctx.owner = owner;
+        return 'env_status_taken';
+    });
+}
 
 var Main = {
     authorize: function (token) {
@@ -45,7 +51,9 @@ var Main = {
     },
 
     process: function (ctx) {
-        if (!ctx.command || !ctx.env)
+        if (!ctx.command)
+            return 'not_enough_params';
+        if (!ctx.env)
             return 'not_enough_params';
         switch (ctx.command) {
             case 'add':
@@ -54,6 +62,8 @@ var Main = {
                 return take(ctx);
             case 'release':
                 return release(ctx);
+            case 'status':
+                return status(ctx);
         }
         return 'unknown_command';
     }
