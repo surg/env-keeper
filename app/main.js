@@ -3,8 +3,8 @@ var storage = require('./storage.js');
 function add(ctx) {
     return storage.get(ctx.env).then(function (env) {
         if (env != null) return 'env_exists'; // TODO: return status, e.g. env_exists_free and env_exists_taken
-        storage.add(ctx.env);
-        return 'env_add_success';
+        return storage.add(ctx.env).then(function() {return 'env_add_success';});
+
     });
 
 }
