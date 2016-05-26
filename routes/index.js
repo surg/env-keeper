@@ -9,6 +9,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/webhook', function (req, res) {
     console.log(req.params);
+    res.send('Hello, world');
 });
 
 module.exports = router;
