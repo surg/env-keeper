@@ -3,6 +3,9 @@ var storage = require('./storage.js');
 function add(ctx) {
     return storage.get(ctx.env).then(function (env) {
         if (env != null) return status(ctx);
+        var blacklist = process.env.ADD_BLACKLIST;
+        if (blacklist && blacklist.indexOf(ctx.user) >= 0)
+            return new Promise(function(r) {r('env_add_banned')});
         return storage.add(ctx.env).then(function() {return 'env_add_success';});
     });
 }
