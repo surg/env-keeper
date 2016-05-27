@@ -13,7 +13,7 @@ function take(ctx) {
         if (owner == ctx.user)
             return 'already_own';
         if (owner != '') {
-            ctx.owner = env;
+            ctx.owner = owner;
             return 'env_taken';
         }
         return storage.set(ctx.env, ctx.user).then(function () {
