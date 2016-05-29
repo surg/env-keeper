@@ -3,9 +3,18 @@ var storage = require('./storage.js');
 function add(ctx) {
     return storage.get(ctx.env).then(function (env) {
         if (env != null) return status(ctx);
+
+        // Check if the guy is banned.
         var blacklist = process.env.ADD_BLACKLIST;
         if (blacklist && blacklist.indexOf(ctx.user) >= 0)
             return new Promise(function(r) {r('env_add_banned')});
+
+        // Check name format
+        var regex = /^[A-Za-z-_0-9]+$/;
+        if (!regex.test(ctx.env)) {
+            ctx.regex = regex;
+            return new Promise(function(r) {r('env_add_invalid_name')});
+        }
         return storage.add(ctx.env).then(function() {return 'env_add_success';});
     });
 }
