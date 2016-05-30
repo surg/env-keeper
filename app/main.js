@@ -7,13 +7,13 @@ function add(ctx) {
         // Check if the guy is banned.
         var blacklist = process.env.ADD_BLACKLIST;
         if (blacklist && blacklist.indexOf(ctx.user) >= 0)
-            return new Promise(function(r) {r('env_add_banned')});
+            return Promise.resolve('env_add_banned');
 
         // Check name format
         var regex = /^[A-Za-z-_0-9]+$/;
         if (!regex.test(ctx.env)) {
             ctx.regex = regex;
-            return new Promise(function(r) {r('env_add_invalid_name')});
+            return Promise.resolve('env_add_invalid_name');
         }
         return storage.add(ctx.env).then(function() {return 'env_add_success';});
     });
@@ -57,14 +57,33 @@ function status(ctx) {
     });
 }
 
+function bulkstatus(ctx) {
+    return storage.getall().then(function(envs) {
+        envs.sort(function(a, b) { return a.key > b.key});
+        ctx.envs = envs.slice(0, -1);
+        ctx.last = envs[envs.length - 1];
+        console.log(envs);
+        return 'env_status_all';
+    });
+}
+
+function notEnoughParams() {
+    return Promise.resolve('not_enough_params');
+}
+
 var Main = {
     authorize: function (token) {
         return token == process.env.TOKEN;
     },
 
     process: function (ctx) {
-        if (!ctx.command || !ctx.env)
-            return new Promise(function(r) {r('not_enough_params')});
+        if (!ctx.env) {
+            if (ctx.command == 'status') {
+                return bulkstatus(ctx);
+            }
+            return notEnoughParams();
+        }
+
         switch (ctx.command) {
             case 'add':
                 return add(ctx);
@@ -75,7 +94,7 @@ var Main = {
             case 'status':
                 return status(ctx);
         }
-        return new Promise(function(r) {r('unknown_command')});
+        return Promise.resolve('unknown_command');
     }
 };
 

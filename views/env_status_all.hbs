@@ -1,0 +1,28 @@
+{
+{{>common}}
+"attachments": [
+    {{#each envs}}
+        {
+        "mrkdwn_in": ["text"],
+        {{#if val}}
+            "color": "warning",
+            "text": "*{{key}}* is taken by {{val}}."
+        {{else}}
+            "color": "good",
+            "text": "*{{key}}* is available."
+        {{/if}}
+        },
+    {{/each}}
+    {
+        "mrkdwn_in": ["text"],
+        "color": "good",
+        {{#if val}}
+            "color": "warning",
+            "text": "*{{last.key}}* is taken by {{last.val}}."
+        {{else}}
+            "color": "good",
+            "text": "*{{last.key}}* is available."
+        {{/if}}
+    }
+    ]
+}
