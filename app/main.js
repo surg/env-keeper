@@ -62,7 +62,6 @@ function bulkstatus(ctx) {
         envs.sort(function(a, b) { return a.key > b.key});
         ctx.envs = envs.slice(0, -1);
         ctx.last = envs[envs.length - 1];
-        console.log(envs);
         return 'env_status_all';
     });
 }
