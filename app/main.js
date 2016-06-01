@@ -1,4 +1,7 @@
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({name: 'env_keeper'});
 var storage = require('./storage.js');
+
 
 function add(ctx) {
     return storage.get(ctx.env).then(function (env) {
@@ -6,15 +9,19 @@ function add(ctx) {
 
         // Check if the guy is banned.
         var blacklist = process.env.ADD_BLACKLIST;
-        if (blacklist && blacklist.indexOf(ctx.user) >= 0)
+        if (blacklist && blacklist.indexOf(ctx.user) >= 0) {
+            log.info(ctx, "Blacklisted user tried to add env");
             return Promise.resolve('env_add_banned');
+        }
 
         // Check name format
         var regex = /^[A-Za-z-_0-9]+$/;
         if (!regex.test(ctx.env)) {
+            log.info(ctx, "Env name format violation");
             ctx.regex = regex;
             return Promise.resolve('env_add_invalid_name');
         }
+        log.info(ctx, "Env added");
         return storage.add(ctx.env).then(function() {return 'env_add_success';});
     });
 }
