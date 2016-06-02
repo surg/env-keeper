@@ -11,8 +11,9 @@ var RedisStorage = {
         return client.getAsync(name);
     },
 
-    getall: function() {
-        var keys = client.keysAsync(KEY_PREFIX + '*');
+    getall: function(partialKey) {
+        partialKey = partialKey || '';
+        var keys = client.keysAsync(KEY_PREFIX + partialKey + '*');
 
         return keys.map(function (k) {
             k = k.substr(KEY_PREFIX.length);

@@ -65,16 +65,12 @@ function status(ctx) {
 }
 
 function bulkstatus(ctx) {
-    return storage.getall().then(function(envs) {
+    return storage.getall(ctx.env).then(function(envs) {
         envs.sort(function(a, b) { return a.key > b.key});
         ctx.envs = envs.slice(0, -1);
         ctx.last = envs[envs.length - 1];
         return 'env_status_all';
     });
-}
-
-function notEnoughParams() {
-    return Promise.resolve('not_enough_params');
 }
 
 var Main = {
@@ -83,11 +79,8 @@ var Main = {
     },
 
     process: function (ctx) {
-        if (!ctx.env) {
-            if (ctx.command == 'status') {
-                return bulkstatus(ctx);
-            }
-            return notEnoughParams();
+        if (!ctx.env && (!ctx.command || ctx.command != 'status')) {
+            return Promise.resolve('not_enough_params');
         }
 
         switch (ctx.command) {
@@ -98,7 +91,7 @@ var Main = {
             case 'release':
                 return release(ctx);
             case 'status':
-                return status(ctx);
+                return bulkstatus(ctx);
         }
         return Promise.resolve('unknown_command');
     }
