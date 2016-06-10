@@ -1,6 +1,8 @@
+var Promise = require('bluebird');
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: 'env_keeper'});
 var storage = require('./storage.js');
+var fs = Promise.promisifyAll(require('fs'));
 
 
 function add(ctx) {
@@ -73,13 +75,20 @@ function bulkstatus(ctx) {
     });
 }
 
+function help(ctx) {
+    return fs.readFileAsync('usage.md').then(function(txt) {
+        ctx.help = txt;
+        return 'help';
+    });
+}
+
 var Main = {
     authorize: function (token) {
         return token == process.env.TOKEN;
     },
 
     process: function (ctx) {
-        if (!ctx.env && (!ctx.command || ctx.command != 'status')) {
+        if (!ctx.env && (!ctx.command || ['status', 'help'].indexOf(ctx.command) < 0)) {
             return Promise.resolve('not_enough_params');
         }
 
@@ -92,6 +101,8 @@ var Main = {
                 return release(ctx);
             case 'status':
                 return bulkstatus(ctx);
+            case 'help':
+                return help(ctx);
         }
         return Promise.resolve('unknown_command');
     }
