@@ -15,8 +15,7 @@
     {{/each}}
     {
         "mrkdwn_in": ["text"],
-        "color": "good",
-        {{#if val}}
+        {{#if last.val}}
             "color": "warning",
             "text": "*{{last.key}}* is taken by {{last.val}}."
         {{else}}
