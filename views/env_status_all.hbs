@@ -15,12 +15,17 @@
     {{/each}}
     {
         "mrkdwn_in": ["text"],
-        {{#if last.val}}
-            "color": "warning",
-            "text": "*{{last.key}}* is taken by {{last.val}}."
+        {{#if last}}
+            {{#if last.val}}
+                "color": "warning",
+                "text": "*{{last.key}}* is taken by {{last.val}}."
+            {{else}}
+                "color": "good",
+                "text": "*{{last.key}}* is available."
+            {{/if}}
         {{else}}
-            "color": "good",
-            "text": "*{{last.key}}* is available."
+            "color": "danger",
+            "text": "No suitable envs found"
         {{/if}}
     }
     ]

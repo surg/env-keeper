@@ -66,13 +66,22 @@ function status(ctx) {
     });
 }
 
-function bulkstatus(ctx) {
-    return storage.getall(ctx.env).then(function(envs) {
+function prepstatus(ctx) {
+    return function(envs) {
         envs.sort(function(a, b) { return a.key > b.key});
         ctx.envs = envs.slice(0, -1);
         ctx.last = envs[envs.length - 1];
         return 'env_status_all';
-    });
+    };
+}
+function bulkstatus(ctx) {
+    return storage.getall(ctx.env).then(prepstatus(ctx));
+}
+
+function free(ctx) {
+    return storage.getall(ctx.env).filter(function(env) {
+        return !env.val;
+    }).then(prepstatus(ctx));
 }
 
 function help(ctx) {
@@ -88,7 +97,8 @@ var Main = {
     },
 
     process: function (ctx) {
-        if (!ctx.env && (!ctx.command || ['status', 'help'].indexOf(ctx.command) < 0)) {
+        var noparams_commands = ['status', 'help', 'free?'];
+        if (!ctx.env && (!ctx.command || noparams_commands.indexOf(ctx.command) < 0)) {
             return Promise.resolve('not_enough_params');
         }
 
@@ -101,6 +111,8 @@ var Main = {
                 return release(ctx);
             case 'status':
                 return bulkstatus(ctx);
+            case 'free?':
+                return free(ctx);
             case 'help':
                 return help(ctx);
         }
