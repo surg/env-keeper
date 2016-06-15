@@ -5,9 +5,13 @@ var storage = require('./storage.js');
 var fs = Promise.promisifyAll(require('fs'));
 
 
+function validatePresent(value) {
+    return value ? Promise.resolve(value) : Promise.reject('not_enough_params');
+}
+
 function add(ctx) {
-    return storage.get(ctx.env).then(function (env) {
-        if (env != null) return status(ctx);
+    return validatePresent(ctx.env).then(storage.get).then(function (env) {
+        if (env != null) return bulkstatus(ctx);
 
         // Check if the guy is banned.
         var blacklist = process.env.ADD_BLACKLIST;
@@ -29,7 +33,7 @@ function add(ctx) {
 }
 
 function take(ctx) {
-    return storage.get(ctx.env).then(function (owner) {
+    return validatePresent(ctx.env).then(storage.get).then(function (owner) {
         if (owner == null) return 'env_not_found';
         if (owner == ctx.user)
             return 'already_own';
@@ -44,7 +48,7 @@ function take(ctx) {
 }
 
 function release(ctx) {
-    return storage.get(ctx.env).then(function (owner) {
+    return validatePresent(ctx.env).then(storage.get).then(function (owner) {
         if (owner == null) return 'env_not_found';
         if (owner == '') return 'env_already_free';
         if (owner != ctx.user) {
@@ -54,15 +58,6 @@ function release(ctx) {
         return storage.set(ctx.env, '').then(function () {
             return 'env_release_success';
         });
-    });
-}
-
-function status(ctx) {
-    return storage.get(ctx.env).then(function (owner) {
-        if (owner == null) return 'env_not_found';
-        if (owner == '') return 'env_status_free';
-        ctx.owner = owner;
-        return 'env_status_taken';
     });
 }
 
@@ -91,32 +86,25 @@ function help(ctx) {
     });
 }
 
+var admin_commands = {'add': add};
+var commands = {
+    'take': take,
+    'release': release,
+    'status': bulkstatus,
+    'free?': free,
+    'help': help
+};
+
 var Main = {
     authorize: function (token) {
         return token == process.env.TOKEN;
     },
 
     process: function (ctx) {
-        var noparams_commands = ['status', 'help', 'free?'];
-        if (!ctx.env && (!ctx.command || noparams_commands.indexOf(ctx.command) < 0)) {
-            return Promise.resolve('not_enough_params');
-        }
-
-        switch (ctx.command) {
-            case 'add':
-                return add(ctx);
-            case 'take':
-                return take(ctx);
-            case 'release':
-                return release(ctx);
-            case 'status':
-                return bulkstatus(ctx);
-            case 'free?':
-                return free(ctx);
-            case 'help':
-                return help(ctx);
-        }
-        return Promise.resolve('unknown_command');
+        var command = admin_commands[ctx.command] || commands[ctx.command];
+        if (!command)
+            return Promise.resolve('unknown_command');
+        return command(ctx);
     }
 };
 
