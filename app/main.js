@@ -3,6 +3,7 @@ var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: 'env_keeper'});
 var storage = require('./storage.js');
 var fs = Promise.promisifyAll(require('fs'));
+var response = require('./response.js');
 
 
 function validatePresent(value) {
@@ -24,8 +25,7 @@ function add(ctx) {
         var regex = /^[A-Za-z-_0-9]+$/;
         if (!regex.test(ctx.env)) {
             log.info(ctx, "Env name format violation");
-            ctx.regex = regex;
-            return Promise.resolve('env_add_invalid_name');
+            return Promise.resolve(response.env_add_invalid_name(regex));
         }
         log.info(ctx, "Env added");
         return storage.add(ctx.env).then(function() {return 'env_add_success';});

@@ -18,7 +18,7 @@ router.post('/webhook', function (req, res) {
         var ctx = context(body);
         var respond = function(result) {
             res.contentType('application/json');
-            res.render(result, ctx);
+            res.json(result);
         };
         main.process(ctx).then(respond, respond);
     }
