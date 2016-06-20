@@ -3,7 +3,7 @@ var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: 'env_keeper'});
 var storage = require('./storage.js');
 var fs = Promise.promisifyAll(require('fs'));
-var response = require('./response.js');
+var r = require('./response.js');
 
 
 function validatePresent(value) {
@@ -18,17 +18,17 @@ function add(ctx) {
         var blacklist = process.env.ADD_BLACKLIST;
         if (blacklist && blacklist.indexOf(ctx.user) >= 0) {
             log.info(ctx, "Blacklisted user tried to add env");
-            return Promise.resolve('env_add_banned');
+            return Promise.resolve(r.add.banned());
         }
 
         // Check name format
         var regex = /^[A-Za-z-_0-9]+$/;
         if (!regex.test(ctx.env)) {
             log.info(ctx, "Env name format violation");
-            return Promise.resolve(response.env_add_invalid_name(regex));
+            return Promise.resolve(r.add.invalid_name(regex));
         }
         log.info(ctx, "Env added");
-        return storage.add(ctx.env).then(function() {return 'env_add_success';});
+        return storage.add(ctx.env).return(r.add.success(ctx.env));
     });
 }
 
