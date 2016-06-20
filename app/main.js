@@ -34,16 +34,13 @@ function add(ctx) {
 
 function take(ctx) {
     return validatePresent(ctx.env).then(storage.get).then(function (owner) {
-        if (owner == null) return 'env_not_found';
+        if (owner == null) return r.common.not_found(ctx.env);
         if (owner == ctx.user)
-            return 'already_own';
+            return r.take.already_own(ctx.env);
         if (owner != '') {
-            ctx.owner = owner;
-            return 'env_taken';
+            return r.take.taken(ctx.env, owner);
         }
-        return storage.set(ctx.env, ctx.user).then(function () {
-            return 'env_take_success';
-        });
+        return storage.set(ctx.env, ctx.user).return(r.take.success(ctx.env, ctx.user));
     });
 }
 

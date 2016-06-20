@@ -36,12 +36,31 @@ var Add = {
     }
 };
 
-var Response = {
-    add: Add,
-
+var Take = {
     already_own: function(env) {
         return warn(`you already own *${env}*.`)
+    },
+
+    taken: function(env, owner) {
+        return warn(`Sorry, *${env}* is already taken by ${owner}. They must release it first.`)
+    },
+
+    success: function(env, user) {
+        return ok(`*${env}* is now taken by ${user}.`)
     }
+};
+
+var Common = {
+    not_found: function (env) {
+        return error(`*${env}* is not found`)
+    }
+};
+
+var Response = {
+    common: Common,
+    add: Add,
+    take: Take,
+
 
 };
 
