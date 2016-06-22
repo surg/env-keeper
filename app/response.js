@@ -50,6 +50,20 @@ var Take = {
     }
 };
 
+var Release = {
+    already_free: function(env) {
+        return ok(`*${env}* is not taken by anyone.`)
+    },
+
+    not_yours: function(env, owner) {
+        return error(`Sorry, you don't own *${env}*. ${owner} does.`);
+    },
+
+    success: function(env) {
+        return ok(`Success. *${env}* is now free.`);
+    }
+};
+
 var Common = {
     not_found: function (env) {
         return error(`*${env}* is not found`)
@@ -60,7 +74,7 @@ var Response = {
     common: Common,
     add: Add,
     take: Take,
-
+    release: Release
 
 };
 

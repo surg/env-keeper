@@ -46,15 +46,12 @@ function take(ctx) {
 
 function release(ctx) {
     return validatePresent(ctx.env).then(storage.get).then(function (owner) {
-        if (owner == null) return 'env_not_found';
-        if (owner == '') return 'env_already_free';
+        if (owner == null) return r.common.not_found(ctx.env);
+        if (owner == '') return r.release.already_free(ctx.env);
         if (owner != ctx.user) {
-            ctx.owner = owner;
-            return 'env_not_yours';
+            return r.release.not_yours(ctx.env, owner);
         }
-        return storage.set(ctx.env, '').then(function () {
-            return 'env_release_success';
-        });
+        return storage.set(ctx.env, '').return(r.release.success(ctx.env))
     });
 }
 
