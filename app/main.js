@@ -7,7 +7,7 @@ var r = require('./response.js');
 
 
 function validatePresent(value) {
-    return value ? Promise.resolve(value) : Promise.reject('not_enough_params');
+    return value ? Promise.resolve(value) : Promise.reject(r.common.not_enough_params());
 }
 
 function add(ctx) {

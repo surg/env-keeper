@@ -67,6 +67,10 @@ var Release = {
 var Common = {
     not_found: function (env) {
         return error(`*${env}* is not found`)
+    },
+
+    not_enough_params: function() {
+        return error("Not enough params. See usage.");
     }
 };
 
