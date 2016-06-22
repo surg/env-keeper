@@ -7,7 +7,7 @@ var r = require('./response.js');
 
 
 function validatePresent(value) {
-    return value ? Promise.resolve(value) : Promise.reject(r.common.not_enough_params());
+    return value ? Promise.resolve(value) : Promise.reject(r.error.not_enough_params());
 }
 
 function add(ctx) {
@@ -34,7 +34,7 @@ function add(ctx) {
 
 function take(ctx) {
     return validatePresent(ctx.env).then(storage.get).then(function (owner) {
-        if (owner == null) return r.common.not_found(ctx.env);
+        if (owner == null) return r.error.not_found(ctx.env);
         if (owner == ctx.user)
             return r.take.already_own(ctx.env);
         if (owner != '') {
@@ -46,7 +46,7 @@ function take(ctx) {
 
 function release(ctx) {
     return validatePresent(ctx.env).then(storage.get).then(function (owner) {
-        if (owner == null) return r.common.not_found(ctx.env);
+        if (owner == null) return r.error.not_found(ctx.env);
         if (owner == '') return r.release.already_free(ctx.env);
         if (owner != ctx.user) {
             return r.release.not_yours(ctx.env, owner);

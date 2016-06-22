@@ -64,18 +64,23 @@ var Release = {
     }
 };
 
-var Common = {
+var Error = {
     not_found: function (env) {
         return error(`*${env}* is not found`)
     },
 
     not_enough_params: function() {
         return error("Not enough params. See usage.");
+    },
+
+    unknown_command: function (command) {
+        return error(`Unknown command '${command}'. See usage.`);
     }
+
 };
 
 var Response = {
-    common: Common,
+    error: Error,
     add: Add,
     take: Take,
     release: Release
