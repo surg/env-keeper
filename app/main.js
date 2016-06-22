@@ -97,7 +97,7 @@ var Main = {
     process: function (ctx) {
         var command = admin_commands[ctx.command] || commands[ctx.command];
         if (!command)
-            return Promise.resolve('unknown_command');
+            return Promise.resolve(r.error.unknown_command(ctx.command));
         return command(ctx);
     }
 };
