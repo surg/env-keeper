@@ -55,16 +55,8 @@ function release(ctx) {
     });
 }
 
-function prepstatus(ctx) {
-    return function(envs) {
-        envs.sort(function(a, b) { return a.key > b.key});
-        ctx.envs = envs.slice(0, -1);
-        ctx.last = envs[envs.length - 1];
-        return 'env_status_all';
-    };
-}
 function bulkstatus(ctx) {
-    return storage.getall(ctx.env).then(prepstatus(ctx));
+    return storage.getall(ctx.env).then(r.status.list);
 }
 
 function free(ctx) {

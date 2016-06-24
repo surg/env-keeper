@@ -1,6 +1,8 @@
 var express = require('express');
 var main = require('../app/main.js');
 var context = require('../app/context');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({name: 'env_keeper'});
 
 var router = express.Router();
 
@@ -20,7 +22,11 @@ router.post('/webhook', function (req, res) {
             res.contentType('application/json');
             res.json(result);
         };
-        main.process(ctx).then(respond, respond);
+        var respond_err = function(result) {
+            log.error(result);
+            respond(result);
+        };
+        main.process(ctx).then(respond, respond_err);
     }
 
 });
