@@ -67,7 +67,7 @@ function free(ctx) {
 
 function help(ctx) {
     var url = 'https://github.com/surg/env-keeper/blob/master/usage.md';
-    return Promise.resolve(r.help(`See ${url}.`));
+    return Promise.resolve(r.help(`See ${url}`));
 }
 
 var admin_commands = {'add': add};
