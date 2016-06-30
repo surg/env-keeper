@@ -62,11 +62,11 @@ function bulkstatus(ctx) {
 function free(ctx) {
     return storage.getall(ctx.env).filter(function(env) {
         return !env.val;
-    }).then(bulkstatus(ctx));
+    }).then(r.status.list);
 }
 
 function help(ctx) {
-    var url = "https://github.com/surg/env-keeper/blob/master/usage.md";
+    var url = 'https://github.com/surg/env-keeper/blob/master/usage.md';
     return Promise.resolve(r.help(`See ${url}.`));
 }
 
