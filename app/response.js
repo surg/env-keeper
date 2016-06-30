@@ -99,13 +99,17 @@ var Error = {
 
 };
 
+var help = function(helptext) {
+    return helptext;
+};
+
 var Response = {
     error: Error,
     add: Add,
     take: Take,
     release: Release,
-    status: Status
-
+    status: Status,
+    help: help
 };
 
 module.exports = Response;

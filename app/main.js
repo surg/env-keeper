@@ -62,14 +62,12 @@ function bulkstatus(ctx) {
 function free(ctx) {
     return storage.getall(ctx.env).filter(function(env) {
         return !env.val;
-    }).then(prepstatus(ctx));
+    }).then(bulkstatus(ctx));
 }
 
 function help(ctx) {
-    return fs.readFileAsync('usage.md').then(function(txt) {
-        ctx.help = txt;
-        return 'help';
-    });
+    var url = "https://github.com/surg/env-keeper/blob/master/usage.md";
+    return Promise.resolve(r.help(`See ${url}.`));
 }
 
 var admin_commands = {'add': add};
