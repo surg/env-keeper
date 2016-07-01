@@ -44,8 +44,8 @@ function take(ctx) {
     });
 }
 
-function release(ctx) {
-    return validatePresent(ctx.env).then(storage.get).then(function (owner) {
+function releaseOne(ctx) {
+    return storage.get(ctx.env).then(function (owner) {
         if (owner == null) return r.error.not_found(ctx.env);
         if (owner == '') return r.release.already_free(ctx.env);
         if (owner != ctx.user) {
@@ -53,6 +53,19 @@ function release(ctx) {
         }
         return storage.set(ctx.env, '').return(r.release.success(ctx.env))
     });
+}
+
+function releaseAll(ctx) {
+    return storage.getall().filter(function(env) {
+        return env.val == ctx.user;
+    }).each(function(env) {
+        storage.set(env.key, '');
+    }).map(function(env) {return env.key}).then(r.release.success_all);
+}
+
+function release(ctx) {
+    return ctx.env ? releaseOne(ctx) : releaseAll(ctx);
+
 }
 
 function bulkstatus(ctx) {

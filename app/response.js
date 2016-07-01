@@ -66,7 +66,15 @@ var Release = {
 
     success: function (env) {
         return ok(`Success. *${env}* is now free.`);
+    },
+
+    success_all: function(envs) {
+        if (envs.length == 0) return ok("You don't own any envs at the moment.");
+        if (envs.length == 1)
+            return Release.success(envs[0]);
+        return ok(`Success. *${envs.join('*, *')}* are now free`)
     }
+
 };
 
 var Status = {
