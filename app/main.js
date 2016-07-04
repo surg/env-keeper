@@ -32,15 +32,19 @@ function add(ctx) {
     });
 }
 
-function take(ctx) {
+function take(ctx, seize) {
     return validatePresent(ctx.env).then(storage.get).then(function (owner) {
         if (owner == null) return r.error.not_found(ctx.env);
         if (owner == ctx.user)
             return r.take.already_own(ctx.env);
+        var success_response = r.take.success(ctx.env, ctx.user); 
         if (owner != '') {
-            return r.take.taken(ctx.env, owner);
+            if (!seize) return r.take.taken(ctx.env, owner);
+            // Seizing the env
+            log.info(ctx, "Env was seized");
+            success_response = r.take.seized(ctx.env, owner, ctx.user);
         }
-        return storage.set(ctx.env, ctx.user).return(r.take.success(ctx.env, ctx.user));
+        return storage.set(ctx.env, ctx.user).return(success_response);
     });
 }
 
@@ -65,7 +69,10 @@ function releaseAll(ctx) {
 
 function release(ctx) {
     return ctx.env ? releaseOne(ctx) : releaseAll(ctx);
+}
 
+function seize(ctx) {
+    return take(ctx, true);
 }
 
 function bulkstatus(ctx) {
@@ -87,6 +94,7 @@ var admin_commands = {'add': add};
 var commands = {
     'take': take,
     'release': release,
+    'seize': seize,
     'status': bulkstatus,
     'free?': free,
     'help': help

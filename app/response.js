@@ -1,8 +1,9 @@
-var DEFAULT_RESPONSE_TYPE = "ephemeral";
+var EPHEMERAL_RESPONSE = "ephemeral";
+var INCHANNEL_RESPONSE = "in_channel";
 
 function base(attachments) {
     return {
-        response_type: DEFAULT_RESPONSE_TYPE,
+        response_type: EPHEMERAL_RESPONSE,
         attachments: attachments
     }
 }
@@ -52,6 +53,12 @@ var Take = {
 
     success: function (env, user) {
         return ok(`*${env}* is now taken by ${user}.`)
+    },
+
+    seized: function(env, owner, user) {
+        var resp = ok(`${env} was seized from @${owner} by ${user}`);
+        resp.response_type = INCHANNEL_RESPONSE;
+        return resp;
     }
 };
 
