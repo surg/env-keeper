@@ -32,7 +32,12 @@ var RedisStorage = {
 
     add: function(env) {
         return this.set(env, '');
+    },
+
+    remove: function(env) {
+        return this.del(env);
     }
+
 };
 
 
