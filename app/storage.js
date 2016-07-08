@@ -4,7 +4,7 @@ var KEY_PREFIX = 'env:';
 var redis = Promise.promisifyAll(require('redis'));
 Promise.promisifyAll(redis.RedisClient.prototype);
 Promise.promisifyAll(redis.Multi.prototype);
-var client = redis.createClient(process.env.REDIS_URL, {prefix: KEY_PREFIX});
+var client = redis.createClient(process.env.REDIS_URL || "", {prefix: KEY_PREFIX});
 
 var RedisStorage = {
     get: function(name) {
@@ -35,7 +35,7 @@ var RedisStorage = {
     },
 
     remove: function(env) {
-        return this.del(env);
+        return client.delAsync(env);
     }
 
 };
