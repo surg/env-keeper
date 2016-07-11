@@ -20,7 +20,7 @@ function run(text, expected, done) {
 
 describe("Add env suite", function () {
     before(function (done) {
-        storage.add('test-a').then(function () {
+        storage.add('test-add-a').then(function () {
             done()
         });
     });
@@ -41,20 +41,20 @@ describe("Add env suite", function () {
     // TODO: Test blacklist
 
     it("Add an env", function (done) {
-        run('add test-b',
+        run('add test-add-b',
             {
                 "response_type": "ephemeral",
-                "attachments": [{"mrkdwn_in": ["text"], "color": "good", "text": "*test-b* is successfully added."}]
+                "attachments": [{"mrkdwn_in": ["text"], "color": "good", "text": "*test-add-b* is successfully added."}]
             },
             done);
     });
 
     it("Add existing env", function (done) {
-        run('add test-a',
+        run('add test-add-a',
             {
                 "response_type": "ephemeral",
                 "attachments": [{
-                    "mrkdwn_in": ["text"], "color": "good", "text": "*test-a* is available."
+                    "mrkdwn_in": ["text"], "color": "good", "text": "*test-add-a* is available."
                 }]
             },
             done);
@@ -76,8 +76,8 @@ describe("Add env suite", function () {
 
     after(function (done) {
         Promise.all([
-            storage.remove('test-a'),
-            storage.remove('test-b')
+            storage.remove('test-add-a'),
+            storage.remove('test-add-b')
         ]).then(function () {
             done()
         });
