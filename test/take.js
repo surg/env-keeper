@@ -21,7 +21,7 @@ function run(done, text, expected, params) {
         });
 }
 
-describe("Take env suite", function () {
+describe("Release env suite", function () {
     before(function (done) {
         storage.add('test-take-a').then(function () {
             done()
@@ -72,11 +72,20 @@ describe("Take env suite", function () {
         }, {user: 'test2'});
     });
 
+    it("Not found", function (done) {
+        run(done, 'take non-existent', {
+            "response_type": "ephemeral",
+            "attachments": [{
+                "mrkdwn_in": ["text"], "color": "danger",
+                "text": "*non-existent* is not found"
+            }]
+        });
+    });
+
 
     after(function (done) {
         Promise.all([
             storage.remove('test-take-a'),
-            storage.remove('test-take-b')
         ]).then(function () {
             done()
         });
