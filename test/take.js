@@ -21,7 +21,7 @@ function run(done, text, expected, params) {
         });
 }
 
-describe("Release env suite", function () {
+describe("Take env suite", function () {
     before(function (done) {
         storage.add('test-take-a').then(function () {
             done()
