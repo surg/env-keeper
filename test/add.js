@@ -1,22 +1,7 @@
-var supertest = require("supertest");
-var should = require("should");
-var Promise = require("bluebird");
 var storage = require("../app/storage.js");
+var util = require("./util.js");
+var run = util.run;
 
-// This agent refers to PORT where program is runninng.
-var server = supertest.agent("http://localhost:3000");
-
-function run(text, expected, done) {
-    server
-        .post("/webhook")
-        .send({token: 'token', user_name: 'test', text: text})
-        .expect("Content-type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-            JSON.parse(res.text).should.deepEqual(expected);
-            done();
-        });
-}
 
 describe("Add env suite", function () {
     before(function (done) {
@@ -26,52 +11,44 @@ describe("Add env suite", function () {
     });
 
     it("No params", function (done) {
-        run('add',
-            {
-                "attachments": [{
-                    "color": "danger",
-                    "mrkdwn_in": ["text"],
-                    "text": "Not enough params. See usage."
-                }],
-                "response_type": "ephemeral"
-            },
-            done)
+        run(done, 'add', {
+            "attachments": [{
+                "color": "danger",
+                "mrkdwn_in": ["text"],
+                "text": "Not enough params. See usage."
+            }],
+            "response_type": "ephemeral"
+        })
     });
 
     // TODO: Test blacklist
 
     it("Add an env", function (done) {
-        run('add test-add-b',
-            {
-                "response_type": "ephemeral",
-                "attachments": [{"mrkdwn_in": ["text"], "color": "good", "text": "*test-add-b* is successfully added."}]
-            },
-            done);
+        run(done, 'add test-add-b', {
+            "response_type": "ephemeral",
+            "attachments": [{"mrkdwn_in": ["text"], "color": "good", "text": "*test-add-b* is successfully added."}]
+        });
     });
 
     it("Add existing env", function (done) {
-        run('add test-add-a',
-            {
-                "response_type": "ephemeral",
-                "attachments": [{
-                    "mrkdwn_in": ["text"], "color": "good", "text": "*test-add-a* is available."
-                }]
-            },
-            done);
+        run(done, 'add test-add-a', {
+            "response_type": "ephemeral",
+            "attachments": [{
+                "mrkdwn_in": ["text"], "color": "good", "text": "*test-add-a* is available."
+            }]
+        });
     });
 
     it("Invalid name", function (done) {
-        run('add test-a&',
-            {
-                "attachments": [{
-                    "color": "warning",
-                    "mrkdwn_in": ["text"],
-                    "text": "Sorry, but the suggested name doesn't seem quite right. Try something that fits reqex /^[A-Za-z-_0-9]+$/"
-                }
-                ],
-                "response_type": "ephemeral"
-            },
-            done);
+        run(done, 'add test-a&', {
+            "attachments": [{
+                "color": "warning",
+                "mrkdwn_in": ["text"],
+                "text": "Sorry, but the suggested name doesn't seem quite right. Try something that fits reqex /^[A-Za-z-_0-9]+$/"
+            }
+            ],
+            "response_type": "ephemeral"
+        });
     });
 
     after(function (done) {
@@ -84,5 +61,4 @@ describe("Add env suite", function () {
 
     });
 
-})
-;
+});
