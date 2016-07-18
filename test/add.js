@@ -2,10 +2,10 @@ var storage = require("../app/storage.js");
 var util = require("./util.js");
 var run = util.run;
 
-
 describe("Add env suite", function () {
     before(function (done) {
         storage.add('test-add-a').then(function () {
+            util.setup();
             done()
         });
     });
@@ -52,13 +52,13 @@ describe("Add env suite", function () {
     });
 
     after(function (done) {
+        util.teardown();
         Promise.all([
             storage.remove('test-add-a'),
             storage.remove('test-add-b')
         ]).then(function () {
             done()
         });
-
     });
 
 });

@@ -6,6 +6,7 @@ var run = util.run;
 
 describe("Release env suite", function () {
     before(function (done) {
+        util.setup();
         storage.add('test-release-a').then(function () {
             done()
         });
@@ -92,6 +93,7 @@ describe("Release env suite", function () {
 
 
     after(function (done) {
+        util.teardown();
         Promise.all([
             storage.remove('test-release-a'),
             storage.remove('test-release-b'),

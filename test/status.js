@@ -5,6 +5,11 @@ var runAsync = util.runAsync;
 var run = util.run;
 
 describe("Status suite", function () {
+    before(function(done) {
+        util.setup();
+        done();
+    });
+
     beforeEach(function (done) {
         Promise.all(
             [storage.add('test-status-a'),
@@ -51,5 +56,8 @@ describe("Status suite", function () {
 
     });
 
+    after(function() {
+        util.teardown();
+    })
 })
 ;

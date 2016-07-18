@@ -4,6 +4,7 @@ var run = util.run;
 
 describe("Take env suite", function () {
     before(function (done) {
+        util.setup();
         storage.add('test-take-a').then(function () {
             done()
         });
@@ -65,6 +66,7 @@ describe("Take env suite", function () {
 
 
     after(function (done) {
+        util.teardown();
         Promise.all([
             storage.remove('test-take-a'),
         ]).then(function () {
