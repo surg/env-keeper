@@ -63,7 +63,7 @@ describe("Release env suite", function () {
                     "response_type": "ephemeral",
                     "attachments": [{
                         "mrkdwn_in": ["text"], "color": "good",
-                        "text": "Success. *test-release-c*, *test-release-b* are now free"
+                        "text": "Success. *test-release-b*, *test-release-c* are now free"
                     }]
                 })
             });

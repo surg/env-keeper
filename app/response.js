@@ -87,8 +87,8 @@ var Release = {
 var Status = {
     list: function (envs) {
         var attachments = envs.map(function(e) {
-            var color =  e.val ? "warn" : "good";
-            var text = e.val ? `*${e.key}* is taken by ${e.val}.` : `*${e.key}* is available.`;
+            var color =  e.taken ? "warn" : "good";
+            var text = e.taken ? `*${e.key}* is taken by ${e.owner}.` : `*${e.key}* is available.`;
             return {
                 mrkdwn_in: ["text"],
                 color: color,

@@ -8,7 +8,7 @@ var client = redis.createClient(process.env.REDIS_URL || "", {prefix: KEY_PREFIX
 
 var RedisStorage = {
     get: function(name) {
-        return client.getAsync(name);
+        return client.hgetallAsync(name);
     },
 
     getall: function(partialKey) {
@@ -17,21 +17,23 @@ var RedisStorage = {
 
         return keys.map(function (k) {
             k = k.substr(KEY_PREFIX.length);
-            return client.getAsync(k).then(function(v) {
-                return {
-                    key: k,
-                    val: v
-                }
-            })
+            return client.hgetallAsync(k).then(function(obj) {
+                obj.key = k;
+                return obj;
+            });
         });
     },
 
-    set: function(env, user) {
-        return client.setAsync(env, user);
+    take: function(key, owner) {
+        return client.hmsetAsync(key, {taken: new Date(), owner: owner});
+    },
+
+    release: function(key) {
+        return client.hmsetAsync(key, {taken: '', owner: ''});
     },
 
     add: function(env) {
-        return this.set(env, '');
+        return this.release(env, {taken: ''});
     },
 
     remove: function(env) {

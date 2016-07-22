@@ -33,37 +33,37 @@ function add(ctx) {
 }
 
 function take(ctx, seize) {
-    return validatePresent(ctx.env).then(storage.get).then(function (owner) {
-        if (owner == null) return r.error.not_found(ctx.env);
-        if (owner == ctx.user)
+    return validatePresent(ctx.env).then(storage.get).then(function (env) {
+        if (env == null) return r.error.not_found(ctx.env);
+        if (env.owner == ctx.user)
             return r.take.already_own(ctx.env);
         var success_response = r.take.success(ctx.env, ctx.user); 
-        if (owner != '') {
-            if (!seize) return r.take.taken(ctx.env, owner);
+        if (env.owner != '') {
+            if (!seize) return r.take.taken(ctx.env, env.owner);
             // Seizing the env
             log.info(ctx, "Env was seized");
-            success_response = r.take.seized(ctx.env, owner, ctx.user);
+            success_response = r.take.seized(ctx.env, env.owner, ctx.user);
         }
-        return storage.set(ctx.env, ctx.user).return(success_response);
+        return storage.take(ctx.env, ctx.user).return(success_response);
     });
 }
 
 function releaseOne(ctx) {
-    return storage.get(ctx.env).then(function (owner) {
-        if (owner == null) return r.error.not_found(ctx.env);
-        if (owner == '') return r.release.already_free(ctx.env);
-        if (owner != ctx.user) {
-            return r.release.not_yours(ctx.env, owner);
+    return storage.get(ctx.env).then(function (env) {
+        if (env == null) return r.error.not_found(ctx.env);
+        if (!env.taken) return r.release.already_free(ctx.env);
+        if (env.owner != ctx.user) {
+            return r.release.not_yours(ctx.env, env.owner);
         }
-        return storage.set(ctx.env, '').return(r.release.success(ctx.env))
+        return storage.release(ctx.env).return(r.release.success(ctx.env))
     });
 }
 
 function releaseAll(ctx) {
     return storage.getall().filter(function(env) {
-        return env.val == ctx.user;
+        return env.owner == ctx.user;
     }).each(function(env) {
-        storage.set(env.key, '');
+        storage.release(env.key);
     }).map(function(env) {return env.key}).then(r.release.success_all);
 }
 
@@ -81,7 +81,7 @@ function bulkstatus(ctx) {
 
 function free(ctx) {
     return storage.getall(ctx.env).filter(function(env) {
-        return !env.val;
+        return !env.taken;
     }).then(r.status.list);
 }
 
