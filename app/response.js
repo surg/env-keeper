@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 var EPHEMERAL_RESPONSE = "ephemeral";
 var INCHANNEL_RESPONSE = "in_channel";
 
@@ -87,8 +89,13 @@ var Release = {
 var Status = {
     list: function (envs) {
         var attachments = envs.map(function(e) {
-            var color =  e.taken ? "warn" : "good";
-            var text = e.taken ? `*${e.key}* is taken by ${e.owner}.` : `*${e.key}* is available.`;
+            var color =  "good";
+            var text = `*${e.key}* is available.`;
+            if (e.taken) {
+                color = "warn";
+                var date = moment(e.taken).format('YYYY-MM-DD');
+                text = `*${e.key}* is taken by ${e.owner} on ${date}`;
+            }
             return {
                 mrkdwn_in: ["text"],
                 color: color,

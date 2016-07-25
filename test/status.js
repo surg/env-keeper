@@ -25,7 +25,7 @@ describe("Status suite", function () {
 
     it("Status single taken", function (done) {
         runAsync('take test-status-b1').then(function () {
-            run(done, 'status test-status-b1', response.status.list([{key: 'test-status-b1', owner: 'test', taken: '2016'}]));
+            run(done, 'status test-status-b1', response.status.list([{key: 'test-status-b1', owner: 'test', taken: new Date()}]));
         });
     });
 
@@ -34,7 +34,7 @@ describe("Status suite", function () {
             run(done, 'status test',
                 response.status.list([
                     {key: 'test-status-a', owner: '', taken: ''},
-                    {key: 'test-status-b1', owner: 'test', taken: '2016'}
+                    {key: 'test-status-b1', owner: 'test', taken: new Date()}
                     ]));
         });
     });
