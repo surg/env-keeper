@@ -88,7 +88,9 @@ var Release = {
 
 var Status = {
     list: function (envs) {
-        var attachments = envs.map(function(e) {
+        var attachments = envs.sort(function(a1, a2) {
+            return a1.key > a2.key;
+        }).map(function(e) {
             var color =  "good";
             var text = `*${e.key}* is available.`;
             if (e.taken) {

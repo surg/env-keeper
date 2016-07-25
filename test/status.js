@@ -33,8 +33,9 @@ describe("Status suite", function () {
         runAsync('take test-status-b1').then(function () {
             run(done, 'status test',
                 response.status.list([
-                    {key: 'test-status-a', owner: '', taken: ''},
-                    {key: 'test-status-b1', owner: 'test', taken: new Date()}
+                    {key: 'test-status-b1', owner: 'test', taken: new Date()},
+                    {key: 'test-status-a', owner: '', taken: ''}
+                    
                     ]));
         });
     });
