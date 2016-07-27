@@ -109,6 +109,7 @@ var Main = {
         var command = admin_commands[ctx.command] || commands[ctx.command];
         if (!command)
             return Promise.resolve(r.error.unknown_command(ctx.command));
+        log.info(ctx, "Command invoked");
         return command(ctx);
     }
 };
