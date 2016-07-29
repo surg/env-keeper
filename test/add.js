@@ -21,7 +21,17 @@ describe("Add env suite", function () {
         })
     });
 
-    // TODO: Test blacklist
+    it("Blacklist", function(done) {
+        process.env.ADMIN_BLACKLIST = 'banned';
+        run(done, 'add', {
+            "attachments": [{
+                "color": "danger",
+                "mrkdwn_in": ["text"],
+                "text": "Sorry, you\'re not allowed to add or remove envs."
+            }],
+            "response_type": "ephemeral"
+        }, {user: 'banned'});
+    });
 
     it("Add an env", function (done) {
         run(done, 'add test-add-b', {

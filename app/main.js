@@ -10,16 +10,19 @@ function validatePresent(value) {
     return value ? Promise.resolve(value) : Promise.reject(r.error.not_enough_params());
 }
 
-function add(ctx) {
-    return validatePresent(ctx.env).then(storage.get).then(function (env) {
-        if (env != null) return bulkstatus(ctx);
+function validateAdminAccess(ctx) {
+    // Check if the guy is banned.
+    var blacklist = process.env.ADMIN_BLACKLIST;
+    if (blacklist && blacklist.indexOf(ctx.user) >= 0) {
+        log.info(ctx, "Blacklisted user tried to add env");
+        return Promise.reject(r.error.banned());
+    }
+    return Promise.resolve(ctx);
+}
 
-        // Check if the guy is banned.
-        var blacklist = process.env.ADD_BLACKLIST;
-        if (blacklist && blacklist.indexOf(ctx.user) >= 0) {
-            log.info(ctx, "Blacklisted user tried to add env");
-            return Promise.resolve(r.add.banned());
-        }
+function add(ctx) {
+    return validateAdminAccess(ctx).return(validatePresent(ctx.env)).then(storage.get).then(function (env) {
+        if (env != null) return bulkstatus(ctx);
 
         // Check name format
         var regex = /^[A-Za-z-_0-9]+$/;
@@ -31,6 +34,11 @@ function add(ctx) {
         return storage.add(ctx.env).return(r.add.success(ctx.env));
     });
 }
+
+function remove(ctx) {
+
+}
+
 
 function take(ctx, seize) {
     return validatePresent(ctx.env).then(storage.get).then(function (env) {
@@ -90,7 +98,7 @@ function help(ctx) {
     return Promise.resolve(r.help(`See ${url}`));
 }
 
-var admin_commands = {'add': add};
+var admin_commands = {'add': add, 'remove': remove};
 var commands = {
     'take': take,
     'release': release,

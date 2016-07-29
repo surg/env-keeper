@@ -35,10 +35,6 @@ var Add = {
         return warn(`Sorry, but the suggested name doesn't seem quite right. Try something that fits reqex ${regex}`)
     },
 
-    banned: function () {
-        return error("Sorry, man, you're banned for adding weird stuff");
-    },
-
     success: function (env) {
         return ok(`*${env}* is successfully added.`);
     }
@@ -120,7 +116,12 @@ var Error = {
 
     unknown_command: function (command) {
         return error(`Unknown command '${command}'. See usage.`);
+    },
+    
+    banned: function () {
+        return error("Sorry, you're not allowed to add or remove envs.");
     }
+
 
 };
 
