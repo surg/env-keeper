@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/surg/env-keeper.svg?branch=master)](https://travis-ci.org/surg/env-keeper)
+
 A simple app that keeps track of available environments' availability (actually any shared resources). Who owns what etc.
 
 See [usage](usage.md) for the list of available commands and their semantics.
