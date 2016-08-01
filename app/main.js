@@ -36,7 +36,11 @@ function add(ctx) {
 }
 
 function remove(ctx) {
-
+    return validateAdminAccess(ctx).return(validatePresent(ctx.env)).then(storage.get).then(function (env) {
+        if (env == null) return r.error.not_found(ctx.env);
+        
+        return storage.remove(env.key).return(r.remove.success(ctx.env));
+    });
 }
 
 

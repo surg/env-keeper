@@ -40,6 +40,12 @@ var Add = {
     }
 };
 
+var Remove = {
+    success: function (env) {
+        return ok(`*${env}* is successfully removed.`);
+    }
+};
+
 var Take = {
     already_own: function (env) {
         return warn(`you already own *${env}*.`)
@@ -132,6 +138,7 @@ var help = function(helptext) {
 var Response = {
     error: Error,
     add: Add,
+    remove: Remove,
     take: Take,
     release: Release,
     status: Status,
