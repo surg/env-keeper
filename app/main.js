@@ -14,7 +14,7 @@ function validateAdminAccess(ctx) {
     // Check if the guy is banned.
     var blacklist = process.env.ADMIN_BLACKLIST;
     if (blacklist && blacklist.indexOf(ctx.user) >= 0) {
-        log.info(ctx, "Blacklisted user tried to add env");
+        log.info(ctx, "Blacklisted user tried to manipulate an env");
         return Promise.reject(r.error.banned());
     }
     return Promise.resolve(ctx);
@@ -38,7 +38,7 @@ function add(ctx) {
 function remove(ctx) {
     return validateAdminAccess(ctx).return(validatePresent(ctx.env)).then(storage.get).then(function (env) {
         if (env == null) return r.error.not_found(ctx.env);
-        
+        log.info(ctx, "Env removed");
         return storage.remove(env.key).return(r.remove.success(ctx.env));
     });
 }
