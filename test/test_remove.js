@@ -32,6 +32,7 @@ describe("Remove env suite", function () {
             "response_type": "ephemeral"
         }, {user: 'banned'});
     });
+    
 
     it("Remove an env", function (done) {
         run(done, 'remove test-remove-a', {
